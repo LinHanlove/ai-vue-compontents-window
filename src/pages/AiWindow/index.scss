@@ -1,0 +1,380 @@
+// 主题变量
+$themes: (
+  light: ( // 背景和边框
+    bg-color: #f9fafb,
+    border-color: #e5e7eb,
+    header-bg: #ffffff,
+
+    // 文字颜色
+    text-color: #1f2937,
+    text-secondary: #6b7280,
+
+    // 输入框
+    input-bg: #ffffff,
+    input-border: #e2e8f0,
+    input-focus-border: #3b82f6,
+    input-hover-border: #cbd5e1,
+
+    // 按钮和交互
+    button-bg: #3b82f6,
+    button-hover: #2563eb,
+    tool-hover: #f1f5f9,
+
+    // 消息气泡
+    message-bg: #f1f5f9,
+    message-user-bg: #3b82f6,
+    message-user-text: #ffffff,
+
+    toolbar-hover: #f1f5f9),
+  dark: ( // 背景和边框
+    bg-color: #1e293b,
+    border-color: #334155,
+    header-bg: #0f172a,
+
+    // 文字颜色
+    text-color: #f9fafb,
+    text-secondary: #9ca3af,
+
+    // 输入框
+    input-bg: #1f2937,
+    input-border: #4b5563,
+    input-focus-border: #60a5fa,
+    input-hover-border: #6b7280,
+
+    // 按钮和交互
+    button-bg: #3b82f6,
+    button-hover: #2563eb,
+    tool-hover: #374151,
+
+    // 消息气泡
+    message-bg: #374151,
+    message-user-bg: #3b82f6,
+    message-user-text: #ffffff,
+
+    toolbar-hover: #374151)
+);
+
+// 动画
+@keyframes bounce {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  70% {
+    transform: scale(1.02);
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fade {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+@keyframes slide-up {
+  0% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-down {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+}
+
+@keyframes scale-up {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes scale-down {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+// 动画类
+.bounce-enter-active {
+  animation: bounce var(--duration, 300ms) cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+.bounce-leave-active {
+  animation: fade var(--duration, 300ms) cubic-bezier(0.4, 0, 1, 1);
+}
+
+.slide-up-enter-active {
+  animation: slide-up var(--duration, 400ms) cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+.slide-down-leave-active {
+  animation: slide-down var(--duration, 400ms) cubic-bezier(0.4, 0, 1, 1);
+}
+
+.scale-up-enter-active {
+  animation: scale-up var(--duration, 300ms) cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+.scale-down-leave-active {
+  animation: scale-down var(--duration, 300ms) cubic-bezier(0.4, 0, 1, 1);
+}
+
+.fade-in-enter-active {
+  animation: fade-in var(--duration, 200ms) ease-out;
+}
+
+.fade-out-leave-active {
+  animation: fade-out var(--duration, 200ms) ease-in;
+}
+
+// 主题样式
+.chat-window,
+.chat-box {
+  @each $theme, $colors in $themes {
+    [data-theme="#{$theme}"] & {
+      background-color: map-get($colors, bg-color);
+      color: map-get($colors, text-color);
+
+      .header {
+        background-color: map-get($colors, header-bg);
+        border-bottom: 1px solid map-get($colors, border-color);
+
+        .avatar {
+          background-color: map-get($colors, button-bg);
+          color: #ffffff;
+        }
+
+        .status {
+          color: map-get($colors, text-secondary);
+        }
+
+        .close {
+          color: map-get($colors, text-secondary);
+
+          &:hover {
+            background-color: map-get($colors, tool-hover);
+          }
+        }
+      }
+
+      .message-group {
+        .avatar {
+          background-color: map-get($colors, button-bg);
+          color: #ffffff;
+        }
+
+        .message {
+          &.ai {
+            background-color: map-get($colors, message-bg);
+            color: map-get($colors, text-color);
+          }
+
+          &:not(.ai) {
+            background-color: map-get($colors, message-user-bg);
+            color: map-get($colors, message-user-text);
+          }
+
+          .time {
+            color: map-get($colors, text-secondary);
+          }
+        }
+      }
+
+      .chat-input {
+        border-top: 1px solid map-get($colors, border-color);
+        background-color: map-get($colors, bg-color);
+
+        .tools button {
+          color: map-get($colors, text-secondary);
+
+          &:hover {
+            background-color: map-get($colors, tool-hover);
+          }
+        }
+
+        input {
+          background-color: map-get($colors, input-bg);
+          border: 1px solid map-get($colors, input-border);
+          color: map-get($colors, text-color);
+          transition: all 0.2s ease;
+
+          &::placeholder {
+            color: map-get($colors, text-secondary);
+          }
+
+          &:hover {
+            border-color: map-get($colors, input-hover-border);
+          }
+
+          &:focus {
+            border-color: map-get($colors, input-focus-border);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+            outline: none;
+          }
+        }
+
+        .send {
+          background-color: map-get($colors, button-bg);
+          color: #ffffff;
+
+          &:hover {
+            background-color: map-get($colors, button-hover);
+          }
+        }
+
+        .chat-toolbar {
+          .tool-btn {
+            &:hover {
+              background-color: map-get($colors, toolbar-hover);
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+.float-btn {
+  @each $theme, $colors in $themes {
+    [data-theme="#{$theme}"] & {
+      background-color: map-get($colors, button-bg);
+      color: #ffffff;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+      &:hover {
+        background-color: map-get($colors, button-hover);
+      }
+    }
+  }
+}
+
+// 更新主题样式
+.chat-window {
+  @apply overflow-hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+  .header {
+    @apply relative z-10;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+    .avatar {
+      @apply shadow-sm;
+    }
+  }
+
+  .messages {
+    @apply px-4 py-6;
+
+    .message {
+      @apply shadow-sm;
+
+      &.ai {
+        @apply backdrop-blur-sm;
+      }
+    }
+  }
+
+  .chat-input {
+    @apply relative z-10;
+    box-shadow: 0 -1px 2px 0 rgba(0, 0, 0, 0.05);
+
+    .input-group {
+      input {
+        @apply shadow-sm;
+      }
+
+      .send {
+        @apply shadow-sm;
+      }
+    }
+  }
+}
+
+// 更新浮动按钮样式
+.float-btn {
+  @apply shadow-lg;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:hover {
+    @apply shadow-xl;
+    transform: translateY(-2px) scale(1.05);
+  }
+
+  &:active {
+    @apply shadow-md;
+    transform: translateY(0) scale(0.95);
+  }
+}
+
+// 美化滚动条
+.messages {
+  &::-webkit-scrollbar {
+    @apply w-1.5;
+  }
+
+  &::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    @apply rounded-full bg-black/5 hover:bg-black/10;
+    transition: background-color 0.2s ease;
+  }
+}
