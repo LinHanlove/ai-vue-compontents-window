@@ -1,28 +1,23 @@
-import { AIProvider, ProviderType } from "./types";
+import { AIProvider } from "./types";
 import { OpenAIProvider } from "./openai";
 import { ClaudeProvider } from "./claude";
 import { KimiProvider } from "./kimi";
 
-export class AIProviderFactory {
-  private static provider: AIProvider | null = null;
-
-  static createProvider(type: ProviderType): AIProvider {
-    if (this.provider) return this.provider;
-
-    switch (type) {
-      case "openai":
-        this.provider = new OpenAIProvider();
-        break;
-      case "claude":
-        this.provider = new ClaudeProvider();
-        break;
-      case "kimi":
-        this.provider = new KimiProvider();
-        break;
-      default:
-        this.provider = new OpenAIProvider();
-    }
-
-    return this.provider;
+/**
+ * 创建 AI 提供商实例
+ * @param {string} provider - AI 提供商名称
+ * @returns {AIProvider} AI 提供商实例
+ * @throws {Error} 当提供商不存在时抛出错误
+ */
+export const createAIProvider = (provider: string): AIProvider => {
+  switch (provider) {
+    case "openai":
+      return new OpenAIProvider();
+    case "claude":
+      return new ClaudeProvider();
+    case "kimi":
+      return new KimiProvider();
+    default:
+      throw new Error(`Unknown AI provider: ${provider}`);
   }
-}
+};

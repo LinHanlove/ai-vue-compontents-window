@@ -1,5 +1,8 @@
 import { AIProvider } from "./types";
 
+/**
+ * Kimi API 响应接口
+ */
 interface KimiResponse {
   choices: Array<{
     message: {
@@ -20,9 +23,19 @@ interface KimiResponse {
   };
 }
 
+/**
+ * Kimi AI 提供商实现
+ * @implements {AIProvider}
+ */
 export class KimiProvider implements AIProvider {
   name = "kimi";
 
+  /**
+   * 发送聊天请求到 Kimi API
+   * @param {string} message - 用户消息
+   * @returns {Promise<string>} AI 响应内容
+   * @throws {Error} 当 API 请求失败时抛出错误
+   */
   async chat(message: string): Promise<string> {
     const response = await fetch(
       `${import.meta.env.VITE_KIMI_BASE_URL}/v1/chat/completions`,

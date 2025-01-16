@@ -4,9 +4,19 @@ interface ClaudeResponse {
   completion: string;
 }
 
+/**
+ * Claude AI 提供商实现
+ * @implements {AIProvider}
+ */
 export class ClaudeProvider implements AIProvider {
   name = "claude";
 
+  /**
+   * 发送聊天请求到 Claude API
+   * @param {string} message - 用户消息
+   * @returns {Promise<string>} AI 响应内容
+   * @throws {Error} 当 API 请求失败时抛出错误
+   */
   async chat(message: string): Promise<string> {
     const response = await fetch(
       `${import.meta.env.VITE_CLAUDE_BASE_URL}/chat`,

@@ -4,13 +4,22 @@ import { marked } from 'marked';
 import { computed } from 'vue';
 import { copyToClipboard } from '@/utils/clipboard';
 
+/**
+ * 用户消息组件属性
+ */
 interface Props {
+  /** 消息内容 */
   content: string;
+  /** 消息时间 */
   time: string;
 }
 
 const props = defineProps<Props>();
 
+/**
+ * 格式化消息内容为 Markdown
+ * @returns {string} 格式化后的 HTML 字符串
+ */
 const formattedContent = computed(() => {
   return marked(props.content, {
     breaks: true,
@@ -18,6 +27,11 @@ const formattedContent = computed(() => {
   });
 });
 
+/**
+ * 复制消息内容到剪贴板
+ * @async
+ * @returns {Promise<void>}
+ */
 const copyContent = async () => {
   await copyToClipboard(props.content);
 };

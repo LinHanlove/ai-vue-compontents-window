@@ -2,17 +2,32 @@
 import { Icon } from '@iconify/vue';
 import { ref } from 'vue';
 
+/**
+ * 输入框组件属性
+ */
+defineProps<{
+  /** 是否处于加载状态 */
+  loading?: boolean;
+}>();
+
+/**
+ * 组件事件
+ */
 const emit = defineEmits<{
+  /**
+   * 发送消息事件
+   * @param {string} message - 要发送的消息内容
+   */
   (e: 'send', message: string): void;
 }>();
 
 const message = ref('');
 const loading = ref(false);
 
-defineProps<{
-  loading?: boolean;
-}>();
-
+/**
+ * 处理发送消息
+ * 当消息不为空时，触发 send 事件并清空输入框
+ */
 const handleSend = () => {
   if (message.value.trim()) {
     emit('send', message.value);
@@ -20,6 +35,11 @@ const handleSend = () => {
   }
 };
 
+/**
+ * 处理键盘事件
+ * 当按下 Enter 且没有按住 Shift 时发送消息
+ * @param {KeyboardEvent} e - 键盘事件对象
+ */
 const handleKeydown = (e: KeyboardEvent) => {
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault();

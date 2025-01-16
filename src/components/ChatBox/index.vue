@@ -6,6 +6,18 @@ import ChatInput from '../ChatInput/index.vue';
 import { ref, nextTick } from 'vue';
 import { chatCompletion } from '@/ai/chat';
 
+/**
+ * 聊天消息接口
+ */
+interface ChatMessage {
+  type: 'ai' | 'user';
+  content: string;
+  time: string;
+}
+
+/**
+ * 聊天框组件属性
+ */
 interface ChatBoxProps {
   title: string;
   welcomeMessage?: string;
@@ -18,12 +30,6 @@ const props = withDefaults(defineProps<ChatBoxProps>(), {
 defineEmits<{
   (e: 'close'): void;
 }>();
-
-interface ChatMessage {
-  type: 'ai' | 'user';
-  content: string;
-  time: string;
-}
 
 const messages = ref<ChatMessage[]>([
   {
@@ -40,6 +46,11 @@ const loading = ref(false);
 
 const messagesContainer = ref<HTMLElement | null>(null);
 
+/**
+ * 滚动消息容器到底部
+ * @async
+ * @returns {Promise<void>}
+ */
 const scrollToBottom = async () => {
   await nextTick();
   if (messagesContainer.value) {
@@ -47,6 +58,13 @@ const scrollToBottom = async () => {
   }
 };
 
+/**
+ * 处理发送消息事件
+ * @async
+ * @param {string} content - 用户输入的消息内容
+ * @returns {Promise<void>}
+ * @throws {Error} 当 AI 请求失败时抛出错误
+ */
 const handleSend = async (content: string) => {
   const time = new Date().toLocaleTimeString('zh-CN', { 
     hour: '2-digit', 
