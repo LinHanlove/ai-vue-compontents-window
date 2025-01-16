@@ -47,7 +47,7 @@ export class KimiProvider implements AIProvider {
     );
 
     if (!response.ok) {
-      const error = await response.json();
+      const error = (await response.json()) as { message: string };
       throw new Error(
         `Kimi API Error: ${error.message || response.statusText}`
       );

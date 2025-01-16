@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
 import { ref } from 'vue';
-import ChatToolbar from '../ChatToolbar/index.vue';
 
 const emit = defineEmits<{
   (e: 'send', message: string): void;
 }>();
 
 const message = ref('');
+const loading = ref(false);
+
+defineProps<{
+  loading?: boolean;
+}>();
 
 const handleSend = () => {
   if (message.value.trim()) {
@@ -16,32 +20,40 @@ const handleSend = () => {
   }
 };
 
-const handleToolAction = (action: string) => {
-  console.log('Tool action:', action);
-  // 处理工具栏动作
+const handleKeydown = (e: KeyboardEvent) => {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    handleSend();
+  }
 };
 </script>
 
 <template>
   <div class="chat-input">
-    <ChatToolbar
-      @emoji="handleToolAction('emoji')"
-      @image="handleToolAction('image')"
-      @file="handleToolAction('file')"
-    />
-    <div class="input-group">
-      <input
+    <div class="input-wrapper">
+      <textarea
         v-model="message"
-        type="text"
-        placeholder="输入消息..."
-        @keyup.enter="handleSend"
-      >
+        rows="1"
+        placeholder="输入消息，Shift + Enter 换行"
+        @keydown="handleKeydown"
+        :disabled="loading"
+      />
       <button 
-        class="send"
-        title="发送消息"
+        class="send-btn"
+        :disabled="!message.trim() || loading"
         @click="handleSend"
       >
-        <Icon icon="material-symbols:send" width="18" />
+        <Icon 
+          v-if="!loading"
+          icon="solar:arrow-up-linear" 
+          width="16" 
+        />
+        <Icon 
+          v-else
+          icon="svg-spinners:pulse-3" 
+          class="text-white"
+          width="16" 
+        />
       </button>
     </div>
   </div>
@@ -49,29 +61,40 @@ const handleToolAction = (action: string) => {
 
 <style lang="scss" scoped>
 .chat-input {
-  @apply p-4;
+  @apply p-4 border-t border-gray-200 dark:border-gray-700;
 
-  .input-group {
-    @apply flex gap-3 mt-3;
+  .input-wrapper {
+    @apply relative flex items-end gap-2;
 
-    input {
-      @apply flex-1 px-4 py-3 rounded-xl outline-none transition-all duration-200;
-      
-      &::placeholder {
-        @apply opacity-50;
+    textarea {
+      @apply flex-1 px-4 py-2 rounded-xl resize-none outline-none;
+      @apply border border-gray-200 dark:border-gray-700;
+      @apply bg-gray-50 dark:bg-gray-800;
+      @apply text-sm leading-6;
+      @apply focus:ring-1 focus:ring-blue-500/20;
+      min-height: 40px;
+      max-height: 120px;
+
+      &::-webkit-scrollbar {
+        @apply w-2;
+      }
+
+      &::-webkit-scrollbar-track {
+        @apply bg-transparent;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+        @apply hover:bg-gray-400 dark:hover:bg-gray-500;
       }
     }
 
-    .send {
-      @apply p-3.5 rounded-xl transition-all duration-200 flex items-center justify-center;
-      
-      &:hover {
-        transform: scale(1.05);
-      }
-
-      &:active {
-        transform: scale(0.95);
-      }
+    .send-btn {
+      @apply w-10 h-10 rounded-xl flex items-center justify-center;
+      @apply bg-blue-500 text-white;
+      @apply hover:bg-blue-600 disabled:opacity-50 disabled:hover:bg-blue-500;
+      @apply transition-all duration-200;
+      @apply focus:outline-none focus:ring-2 focus:ring-blue-500/20;
     }
   }
 }

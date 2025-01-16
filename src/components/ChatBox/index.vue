@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
-import Message  from '../Message/index.vue';
+import UserMessage from '../Message/UserMessage.vue';
+import AIMessage from '../Message/AIMessage.vue';
 import ChatInput from '../ChatInput/index.vue';
 import { ref, nextTick } from 'vue';
 import { chatCompletion } from '@/ai/chat';
@@ -59,31 +60,40 @@ const handleSend = async (content: string) => {
   });
   await scrollToBottom();
 
+  messages.value.push({
+    type: 'ai',
+    content: '',
+    time: new Date().toLocaleTimeString('zh-CN', { 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    })
+  });
+
   try {
     loading.value = true;
     const response = await chatCompletion(content);
     
-    messages.value.push({
+    messages.value[messages.value.length - 1] = {
       type: 'ai',
       content: response || '抱歉，我现在无法回答这个问题。',
       time: new Date().toLocaleTimeString('zh-CN', { 
         hour: '2-digit', 
         minute: '2-digit' 
       })
-    });
-    await scrollToBottom();
+    };
   } catch (error) {
     console.error('Chat error:', error);
-    messages.value.push({
+    messages.value[messages.value.length - 1] = {
       type: 'ai',
       content: '抱歉，发生了一些错误，请稍后再试。',
       time: new Date().toLocaleTimeString('zh-CN', { 
         hour: '2-digit', 
         minute: '2-digit' 
       })
-    });
+    };
   } finally {
     loading.value = false;
+    await scrollToBottom();
   }
 };
 </script>
@@ -110,18 +120,23 @@ const handleSend = async (content: string) => {
 
     <!-- 消息列表 -->
     <div class="messages" ref="messagesContainer">
-      <Message
-        v-for="(msg, index) in messages"
-        :key="index"
-        :type="msg.type"
-        :content="msg.content"
-        :time="msg.time"
-        :loading="loading && index === messages.length - 1"
-      />
+      <template v-for="(msg, index) in messages" :key="index">
+        <UserMessage
+          v-if="msg.type === 'user'"
+          :content="msg.content"
+          :time="msg.time"
+        />
+        <AIMessage
+          v-else
+          :content="msg.content"
+          :time="msg.time"
+          :loading="loading && index === messages.length - 1"
+        />
+      </template>
     </div>
 
     <!-- 输入框 -->
-    <ChatInput @send="handleSend" />
+    <ChatInput :loading="loading" @send="handleSend" />
   </div>
 </template>
 

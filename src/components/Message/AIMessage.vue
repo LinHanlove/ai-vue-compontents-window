@@ -2,32 +2,34 @@
 import { Icon } from '@iconify/vue';
 import { marked } from 'marked';
 import { computed } from 'vue';
+import { copyToClipboard } from '@/utils/clipboard';
 
-interface MessageProps {
-  type: 'ai' | 'user';
+interface Props {
   content: string;
   time: string;
   loading?: boolean;
 }
 
-const props = defineProps<MessageProps>();
+const props = defineProps<Props>();
 
-// 处理 Markdown
 const formattedContent = computed(() => {
-  if (props.type === 'user') return props.content;
   return marked(props.content, {
     breaks: true,
     gfm: true,
   });
 });
+
+const copyContent = async () => {
+  await copyToClipboard(props.content);
+};
 </script>
 
 <template>
-  <div class="message-group" :class="{ user: type === 'user' }">
+  <div class="message-group">
     <div class="avatar" :class="{ 'animate-pulse': loading }">
       <Icon 
         v-if="!loading"
-        :icon="type === 'ai' ? 'fluent:bot-24-filled' : 'solar:user-bold'" 
+        icon="fluent:bot-24-filled"
         width="16" 
       />
       <Icon 
@@ -37,19 +39,20 @@ const formattedContent = computed(() => {
         width="16" 
       />
     </div>
-    <div class="message" :class="{ loading }">
-      <p v-if="loading">
+    <div class="message">
+      <div v-if="loading" class="message-content loading">
         <span class="typing-dots">
           <span></span>
           <span></span>
           <span></span>
         </span>
-      </p>
-      <div 
-        v-else 
-        class="markdown-body"
-        v-html="formattedContent"
-      ></div>
+      </div>
+      <div v-else class="message-content">
+        <div class="markdown-body" v-html="formattedContent" />
+        <button class="copy-btn" @click="copyContent" title="复制">
+          <Icon icon="solar:copy-linear" width="14" />
+        </button>
+      </div>
       <span class="time">{{ time }}</span>
     </div>
   </div>
@@ -59,19 +62,29 @@ const formattedContent = computed(() => {
 .message-group {
   @apply flex items-start gap-2;
 
-  &.user {
-    @apply flex-row-reverse;
-  }
-
   .avatar {
     @apply w-6 h-6 rounded-full border border-gray-200 dark:border-gray-700 flex items-center justify-center shrink-0;
   }
 
   .message {
-    @apply relative px-4 py-2 rounded-2xl max-w-[85%] border border-gray-200 dark:border-gray-700 shadow-sm;
-    
-    &.loading {
-      @apply min-w-[60px];
+    @apply relative;
+
+    .message-content {
+      @apply relative px-4 py-2 rounded-2xl rounded-tl-sm max-w-[85%] border border-gray-200 dark:border-gray-700 shadow-sm;
+
+      &.loading {
+        @apply min-w-[60px];
+      }
+
+      .copy-btn {
+        @apply absolute right-2 top-2 p-1.5 rounded-lg opacity-0 transition-all duration-200;
+        @apply hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-blue-500;
+        @apply focus:outline-none focus:ring-2 focus:ring-blue-500/20;
+      }
+
+      &:hover .copy-btn {
+        @apply opacity-60 hover:opacity-100;
+      }
     }
 
     :deep(.markdown-body) {
@@ -103,20 +116,8 @@ const formattedContent = computed(() => {
     }
 
     .time {
-      @apply absolute -bottom-5 text-[10px] opacity-60;
-      right: var(--time-right, 0);
-      left: var(--time-left, auto);
+      @apply absolute -bottom-5 right-0 text-[10px] opacity-60;
     }
-  }
-
-  &.user .message {
-    --time-left: 0;
-    --time-right: auto;
-    @apply rounded-tr-sm;
-  }
-
-  &:not(.user) .message {
-    @apply rounded-tl-sm;
   }
 }
 
@@ -136,4 +137,4 @@ const formattedContent = computed(() => {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-4px); }
 }
-</style>
+</style> 
