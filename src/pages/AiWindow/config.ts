@@ -77,3 +77,32 @@ export const defaultConfig: Required<WindowConfig> = {
   isOpen: false,
   welcomeMessage: windowConfig.welcomeMessage,
 };
+
+/**
+ * 图标配置
+ * @description 定义了应用中使用的所有图标
+ */
+export const iconConfig = {
+  /** 窗口图标 */
+  window: {
+    close: "solar:close-circle-bold",
+    minimize: "solar:minimize-square-bold",
+    bot: "solar:bot-bold",
+  },
+
+  /** 消息图标 */
+  message: {
+    bot: "fluent:bot-24-filled",
+    user: "solar:user-bold",
+    copy: "solar:copy-linear",
+    loading: "svg-spinners:pulse-3",
+  },
+
+  /** 工具栏图标 */
+  toolbar: {
+    send: "solar:arrow-up-linear",
+    emoji: "solar:emoji-funny-square-linear",
+    file: "solar:file-text-linear",
+    image: "solar:gallery-linear",
+  },
+} as const;
