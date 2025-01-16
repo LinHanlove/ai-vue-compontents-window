@@ -1,4 +1,7 @@
-// 主题变量
+/**
+ * 主题配置
+ * @description 定义了亮色和暗色两套主题的颜色变量
+ */
 $themes: (
   light: ( // 背景和边框
     bg-color: #f9fafb,
@@ -54,7 +57,10 @@ $themes: (
     toolbar-hover: #374151)
 );
 
-// 动画
+/**
+ * 动画定义
+ * @description 定义了各种过渡动画效果
+ */
 @keyframes bounce {
   0% {
     transform: scale(0.95);
@@ -184,7 +190,10 @@ $themes: (
   animation: fade-out var(--duration, 200ms) ease-in;
 }
 
-// 主题样式
+/**
+ * 主题样式应用
+ * @description 根据当前主题应用对应的样式
+ */
 .chat-window,
 .chat-box {
   @each $theme, $colors in $themes {
@@ -363,7 +372,10 @@ $themes: (
   }
 }
 
-// 美化滚动条
+/**
+ * 滚动条美化
+ * @description 自定义滚动条样式
+ */
 .messages {
   &::-webkit-scrollbar {
     @apply w-1.5;
