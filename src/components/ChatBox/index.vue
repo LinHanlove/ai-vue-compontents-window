@@ -3,7 +3,7 @@ import { Icon } from '@iconify/vue';
 import Message  from '../Message/index.vue';
 import ChatInput from '../ChatInput/index.vue';
 import { ref, nextTick } from 'vue';
-import { chatCompletion } from '@/ai/openai';
+import { chatCompletion } from '@/ai/chat';
 
 interface ChatBoxProps {
   title: string;

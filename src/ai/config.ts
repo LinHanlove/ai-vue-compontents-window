@@ -6,7 +6,7 @@ export const AI_MODELS = {
 
 // AI配置
 export const aiConfig = {
-  model: import.meta.env.VITE_OPENAI_MODEL || AI_MODELS.GPT35,
+  provider: import.meta.env.VITE_AI_PROVIDER || "openai",
   temperature: 0.7,
   maxTokens: 1000,
   systemPrompt: "你是一个有帮助的AI助手。",

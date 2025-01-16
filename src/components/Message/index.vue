@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
+import { marked } from 'marked';
+import { computed } from 'vue';
 
 interface MessageProps {
   type: 'ai' | 'user';
@@ -8,7 +10,16 @@ interface MessageProps {
   loading?: boolean;
 }
 
-defineProps<MessageProps>();
+const props = defineProps<MessageProps>();
+
+// 处理 Markdown
+const formattedContent = computed(() => {
+  if (props.type === 'user') return props.content;
+  return marked(props.content, {
+    breaks: true,
+    gfm: true,
+  });
+});
 </script>
 
 <template>
@@ -27,14 +38,18 @@ defineProps<MessageProps>();
       />
     </div>
     <div class="message" :class="{ loading }">
-      <p>
-        <span v-if="loading" class="typing-dots">
+      <p v-if="loading">
+        <span class="typing-dots">
           <span></span>
           <span></span>
           <span></span>
         </span>
-        <span v-else>{{ content }}</span>
       </p>
+      <div 
+        v-else 
+        class="markdown-body"
+        v-html="formattedContent"
+      ></div>
       <span class="time">{{ time }}</span>
     </div>
   </div>
@@ -59,9 +74,32 @@ defineProps<MessageProps>();
       @apply min-w-[60px];
     }
 
-    p {
-      @apply m-0 text-sm leading-relaxed break-words;
-      white-space: pre-wrap;
+    :deep(.markdown-body) {
+      @apply text-sm leading-relaxed;
+      
+      p { @apply m-0 mb-2 last:mb-0; }
+      
+      pre {
+        @apply my-2 p-3 rounded bg-gray-100 dark:bg-gray-800 overflow-x-auto;
+        code { @apply text-xs; }
+      }
+      
+      code {
+        @apply px-1 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-sm;
+      }
+      
+      ul, ol {
+        @apply pl-6 my-2;
+        li { @apply mb-1; }
+      }
+      
+      a {
+        @apply text-blue-500 hover:underline;
+      }
+      
+      blockquote {
+        @apply pl-3 border-l-4 border-gray-200 dark:border-gray-700 my-2 text-gray-600 dark:text-gray-400;
+      }
     }
 
     .time {
@@ -99,7 +137,3 @@ defineProps<MessageProps>();
   50% { transform: translateY(-4px); }
 }
 </style>
-
-<script lang="ts">
-export const Message = {};
-</script> 
