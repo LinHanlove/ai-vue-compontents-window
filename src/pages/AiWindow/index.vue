@@ -35,6 +35,7 @@ const getPositionStyle = (pos: string) => {
   <div>
     <Transition :name="localIsOpen ? currentAnimation.enter : currentAnimation.leave">
       <div v-if="localIsOpen"
+        :data-theme="props.theme"
         :style="{
           width,
           height,

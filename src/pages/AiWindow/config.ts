@@ -63,6 +63,7 @@ export interface WindowConfig {
   animation?: AnimationType;
   isOpen?: boolean;
   welcomeMessage?: string;
+  theme?: Theme;
 }
 
 /**
@@ -76,6 +77,7 @@ export const defaultConfig: Required<WindowConfig> = {
   animation: "scale",
   isOpen: false,
   welcomeMessage: windowConfig.welcomeMessage,
+  theme: defaultTheme,
 };
 
 /**
