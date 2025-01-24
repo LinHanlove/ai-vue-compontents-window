@@ -5,22 +5,10 @@ import { AIProvider } from "./types";
  */
 interface KimiResponse {
   choices: Array<{
-    message: {
+    delta: {
       content: string;
-      role: string;
     };
-    finish_reason: string;
-    index: number;
   }>;
-  created: number;
-  id: string;
-  model: string;
-  object: string;
-  usage: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
 }
 
 /**
@@ -33,10 +21,10 @@ export class KimiProvider implements AIProvider {
   /**
    * 发送聊天请求到 Kimi API
    * @param {string} message - 用户消息
-   * @returns {Promise<string>} AI 响应内容
+   * @returns {Promise<ReadableStream>} AI 响应流
    * @throws {Error} 当 API 请求失败时抛出错误
    */
-  async chat(message: string): Promise<string> {
+  async chat(message: string): Promise<ReadableStream> {
     const response = await fetch(
       `${import.meta.env.VITE_KIMI_BASE_URL}/v1/chat/completions`,
       {
@@ -53,8 +41,8 @@ export class KimiProvider implements AIProvider {
               content: message,
             },
           ],
-          stream: false,
-          temperature: 0.7,
+          stream: true, // 启用流式输出
+          temperature: 0.3,
         }),
       }
     );
@@ -66,7 +54,6 @@ export class KimiProvider implements AIProvider {
       );
     }
 
-    const data = (await response.json()) as KimiResponse;
-    return data.choices[0].message.content;
+    return response.body; // 返回可读流
   }
 }

@@ -82,7 +82,7 @@ const copyContent = async () => {
     @apply relative;
 
     .message-content {
-      @apply relative px-4 py-2 rounded-2xl rounded-tl-sm max-w-[85%] border border-gray-200 dark:border-gray-700 shadow-sm;
+      @apply relative px-4 py-2 rounded-2xl rounded-tl-sm max-w-[320px] border border-gray-200 dark:border-gray-700 shadow-sm;
 
       &.loading {
         @apply min-w-[60px];

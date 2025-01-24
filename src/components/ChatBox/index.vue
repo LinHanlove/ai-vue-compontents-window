@@ -55,6 +55,8 @@ const scrollToBottom = async () => {
   await nextTick();
   if (messagesContainer.value) {
     messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+  } else {
+    console.warn('messagesContainer is null');
   }
 };
 
@@ -63,7 +65,6 @@ const scrollToBottom = async () => {
  * @async
  * @param {string} content - 用户输入的消息内容
  * @returns {Promise<void>}
- * @throws {Error} 当 AI 请求失败时抛出错误
  */
 const handleSend = async (content: string) => {
   const time = new Date().toLocaleTimeString('zh-CN', { 
@@ -78,6 +79,7 @@ const handleSend = async (content: string) => {
   });
   await scrollToBottom();
 
+  // 添加一个空的 AI 消息占位符
   messages.value.push({
     type: 'ai',
     content: '',
@@ -89,16 +91,49 @@ const handleSend = async (content: string) => {
 
   try {
     loading.value = true;
-    const response = await chatCompletion(content);
+    const responseStream = await chatCompletion(content);
     
-    messages.value[messages.value.length - 1] = {
-      type: 'ai',
-      content: response || '抱歉，我现在无法回答这个问题。',
-      time: new Date().toLocaleTimeString('zh-CN', { 
-        hour: '2-digit', 
-        minute: '2-digit' 
-      })
+    const reader = responseStream.getReader();
+    const decoder = new TextDecoder("utf-8");
+
+    // 读取流数据
+    const readStream = async () => {
+      const { done, value } = await reader.read();
+      if (done) {
+        return;
+      }
+
+      // 解码并处理返回的数据
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split('\n').filter(line => line.trim() !== '');
+
+      for (const line of lines) {
+        if (line.startsWith('data:')) {
+          const jsonData = line.slice(5).trim();
+          if (jsonData === "[DONE]") {
+            // 处理完成标志
+            console.log("Stream finished.");
+            return;
+          }
+          try {
+            const parsedData = JSON.parse(jsonData);
+            if (parsedData.choices && parsedData.choices.length > 0) {
+              const content = parsedData.choices[0].delta.content || '';
+              messages.value[messages.value.length - 1].content += content; // 更新最后一条 AI 消息
+            }
+          } catch (error) {
+            console.error('Error parsing JSON:', error);
+          }
+        }
+      }
+
+      await scrollToBottom(); // 确保在每次更新后滚动到底部
+
+      // 继续读取
+      readStream();
     };
+
+    readStream();
   } catch (error) {
     console.error('Chat error:', error);
     messages.value[messages.value.length - 1] = {
